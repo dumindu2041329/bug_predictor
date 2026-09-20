@@ -9,10 +9,22 @@ import joblib
 import pandas as pd
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager, jwt_required
+
+from auth import auth_bp, configure_jwt, init_db
+from chats import chats_bp, init_chat_db
 
 app = Flask(__name__)
 # Allow the Vite dev server to call the API directly (proxy also configured in vite.config.ts)
 CORS(app, resources={r'/api/*': {'origins': ['http://localhost:5173', 'http://127.0.0.1:5173']}})
+
+# Authentication: SQLite users + JWT sessions
+configure_jwt(app)
+JWTManager(app)
+init_db()
+init_chat_db()
+app.register_blueprint(auth_bp)
+app.register_blueprint(chats_bp)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODELS_DIR = os.path.join(BASE_DIR, 'models')
@@ -128,6 +140,7 @@ def detect_language(filename: str) -> str:
     return 'unknown'
 
 @app.route('/api/models', methods=['GET'])
+@jwt_required()
 def list_models():
     data = [
         {'key': key, 'name': name, 'accuracy': MODEL_ACCURACY[key]}
@@ -137,6 +150,7 @@ def list_models():
     return jsonify({'models': data})
 
 @app.route('/api/predict', methods=['POST'])
+@jwt_required()
 def predict():
     if 'file1' not in request.files or 'file2' not in request.files:
         return jsonify({'error': 'Please upload exactly 2 files.'}), 400

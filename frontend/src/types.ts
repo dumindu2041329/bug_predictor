@@ -1,5 +1,16 @@
 /** Shared API types for the CrossBugSense frontend. */
 
+export interface User {
+  id: number
+  name: string
+  email: string
+}
+
+export interface AuthResponse {
+  token: string
+  user: User
+}
+
 export interface ModelInfo {
   key: string
   name: string
@@ -25,6 +36,21 @@ export interface PredictResponse {
   model: string
   model_accuracy: number
   files: FilePrediction[]
+}
+
+/** A saved analysis session ("chat") shown in the sidebar. */
+export interface ChatSummary {
+  id: number
+  title: string
+  model: string
+  pinned: boolean
+  created_at: string
+  buggy_files: number
+  total_files: number
+}
+
+export interface Chat extends ChatSummary {
+  payload: PredictResponse
 }
 
 export const METRIC_ORDER = [

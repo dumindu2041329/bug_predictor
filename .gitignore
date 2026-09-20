@@ -16,6 +16,9 @@ ENV/
 models/*.pkl
 models/*.joblib
 
+# Auth database (local dev; recreate on boot)
+users.db
+
 # Graphify
 graphify-out/
 

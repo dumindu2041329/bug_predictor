@@ -67,10 +67,18 @@ configuration is needed. For production builds, run `npm run build`
 
 ## API Endpoints
 
-| Method | Endpoint      | Description                                        |
-|--------|---------------|----------------------------------------------------|
-| GET    | `/api/models` | List available models with test accuracy           |
-| POST   | `/api/predict`| Multipart form: `file1`, `file2`, `model` → JSON predictions |
+| Method | Endpoint           | Description                                        |
+|--------|--------------------|----------------------------------------------------|
+| POST   | `/api/auth/register`| Name + email + password → JWT + user (auto sign-in) |
+| POST   | `/api/auth/login`  | Email + password → JWT + user                      |
+| GET    | `/api/auth/me`     | Current user for the stored JWT (session restore)  |
+| GET    | `/api/chats`       | List saved analysis chats, pinned first (auth required) |
+| POST   | `/api/chats`       | Save an analysis run as a chat `{title, model, payload}` |
+| GET    | `/api/chats/<id>`  | One chat with its full prediction payload          |
+| PATCH  | `/api/chats/<id>`  | Pin/unpin a chat `{pinned: boolean}`               |
+| DELETE | `/api/chats/<id>`  | Delete a chat                                      |
+| GET    | `/api/models`      | List available models with test accuracy (auth required) |
+| POST   | `/api/predict`     | Multipart form: `file1`, `file2`, `model` → JSON predictions (auth required) |
 
 ---
 
