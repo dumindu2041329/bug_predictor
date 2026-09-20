@@ -1,8 +1,11 @@
 # CrossBugSense — Cross-Language Bug Predictor
 **Research Project: A.U.Santhusha sliate**
 
-A Flask web application that predicts whether C# and JavaScript source files are bug-prone,
-using machine learning models trained on source code metrics and code smell metrics.
+A machine-learning web application that predicts whether C# and JavaScript source files
+are bug-prone, using models trained on source code metrics and code smell metrics.
+
+- **Frontend:** React + Vite + TypeScript + Tailwind CSS
+- **Backend:** Python (Flask REST API)
 
 ---
 
@@ -10,42 +13,64 @@ using machine learning models trained on source code metrics and code smell metr
 
 ```
 bug_predictor/
-├── app.py                  # Flask backend
-├── requirements.txt        # Python dependencies
-├── templates/
-│   └── index.html          # Frontend UI
-├── models/                 # Pre-trained ML models (auto-generated)
-│   ├── random_forest.pkl
-│   ├── knn.pkl
-│   ├── logistic_regression.pkl
-│   ├── naive_bayes.pkl
-│   └── xgboost.pkl
-└── train_models.py         # Script to (re)train models from dataset
+├── backend/                  # Python Flask API
+│   ├── app.py                # API server (CORS enabled for the dev frontend)
+│   ├── train_models.py       # Script to (re)train models from dataset
+│   ├── requirements.txt      # Python dependencies
+│   ├── dataset.csv           # Training dataset
+│   └── models/               # Pre-trained ML models (.pkl)
+│       ├── random_forest.pkl
+│       ├── knn.pkl
+│       ├── logistic_regression.pkl
+│       ├── naive_bayes.pkl
+│       └── xgboost.pkl
+└── frontend/                 # React + Vite + Tailwind SPA
+    ├── vite.config.ts        # Dev proxy: /api → http://localhost:5000
+    └── src/
+        ├── App.tsx           # Main page
+        ├── api.ts            # API client
+        ├── types.ts          # Shared types (24 metric names, responses)
+        └── components/
+            ├── FileDropzone.tsx   # Drag & drop source file upload
+            ├── ModelSelector.tsx  # ML model picker
+            └── ResultCard.tsx     # Prediction + metrics breakdown
 ```
 
 ---
 
 ## Setup & Run
 
-### 1. Install dependencies
+### 1. Backend (Python)
 ```bash
+cd backend
 pip install -r requirements.txt
+python app.py                 # API on http://localhost:5000
 ```
 
-### 2. Train models (if models/ folder is empty)
+Optional — retrain models if `backend/models/` is missing:
 ```bash
-python train_models.py
+python train_models.py        # uses backend/dataset.csv by default
 ```
 
-### 3. Start the web app
+### 2. Frontend (React + Vite)
 ```bash
-python app.py
+cd frontend
+npm install
+npm run dev                   # UI on http://localhost:5173
 ```
 
-### 4. Open in browser
-```
-http://localhost:5000
-```
+The Vite dev server proxies `/api/*` requests to Flask, so no extra
+configuration is needed. For production builds, run `npm run build`
+(output in `frontend/dist/`), or set `VITE_API_URL` to the backend URL.
+
+---
+
+## API Endpoints
+
+| Method | Endpoint      | Description                                        |
+|--------|---------------|----------------------------------------------------|
+| GET    | `/api/models` | List available models with test accuracy           |
+| POST   | `/api/predict`| Multipart form: `file1`, `file2`, `model` → JSON predictions |
 
 ---
 
@@ -54,7 +79,7 @@ http://localhost:5000
 1. **Upload 2 source files** — any combination of `.cs` and `.js` files
 2. **Select a model** — Random Forest, KNN, Logistic Regression, Naïve Bayes, or XGBoost
 3. **Click Analyse & Predict**
-4. The app extracts 24 metrics from each file (WMC, DIT, LOC, CBO, Intensity, etc.)
+4. The backend extracts 24 metrics from each file (WMC, DIT, LOC, CBO, Intensity, etc.)
 5. The selected model predicts: **Buggy** or **Clean**, with a probability score
 
 ---

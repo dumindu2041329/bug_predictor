@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Sora:wght@300;400;600;700&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --color-bg: #0b0d12;
+  --color-panel: #111420;
+  --color-card: #161929;
+  --color-line: #1e2235;
+  --color-accent: #5c7cff;
+  --color-accent-2: #ff5c7c;
+  --color-good: #2ecc9a;
+  --color-warn: #f5c842;
+  --color-ink: #d4d8f0;
+  --color-muted: #6b7099;
+
+  --font-display: 'Sora', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Faint grid backdrop, matching the original CrossBugSense look */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(92, 124, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(92, 124, 255, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.7);
+  }
+}
+
+.logo-dot {
+  animation: pulse-dot 2s infinite;
+}
