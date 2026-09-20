@@ -4,6 +4,17 @@
 A machine-learning web application that predicts whether C# and JavaScript source files
 are bug-prone, using models trained on source code metrics and code smell metrics.
 
+![React](https://img.shields.io/badge/React-19.2-61DAFB?style=flat-square&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-8.3-646CFF?style=flat-square&logo=vite&logoColor=white)
+![Tailwind%20CSS](https://img.shields.io/badge/Tailwind-4.3-38BDF8?style=flat-square&logo=tailwindcss&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3-3776AB?style=flat-square&logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-REST%20API-000000?style=flat-square&logo=flask&logoColor=white)
+![scikit--learn](https://img.shields.io/badge/scikit--learn-1.3-F7931E?style=flat-square&logo=scikitlearn&logoColor=white)
+![XGBoost](https://img.shields.io/badge/XGBoost-2.0-FF7F00?style=flat-square)
+![JWT](https://img.shields.io/badge/Auth-JWT-000000?style=flat-square&logo=jsonwebtokens&logoColor=white)
+![Status](https://img.shields.io/badge/status-research-brightgreen?style=flat-square)
+
 - **Frontend:** React + Vite + TypeScript + Tailwind CSS
 - **Backend:** Python (Flask REST API)
 
