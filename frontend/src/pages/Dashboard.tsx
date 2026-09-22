@@ -19,7 +19,7 @@ export default function Dashboard() {
 
       <div className="flex min-h-screen flex-col lg:pl-64">
         {/* Slim top bar — mobile menu + theme */}
-        <div className="border-line bg-panel/95 sticky top-0 z-20 flex h-14 items-center border-b px-4 backdrop-blur-[2px] sm:px-6">
+        <div className="border-line bg-panel/95 sticky top-0 z-20 flex h-14 items-center border-b px-4 backdrop-blur-md sm:px-6">
           <button
             type="button"
             onClick={() => setNavOpen(true)}

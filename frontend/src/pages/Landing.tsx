@@ -25,7 +25,7 @@ export default function Landing() {
   return (
     <div className="relative z-10 min-h-screen">
       {/* Top bar */}
-      <div className="border-line bg-panel/95 sticky top-0 z-20 border-b backdrop-blur-[2px]">
+      <div className="border-line bg-panel/95 sticky top-0 z-20 border-b backdrop-blur-md">
         <div className="mx-auto flex max-w-4xl items-center justify-between gap-3 px-6 py-3">
           <Brand />
           <div className="flex items-center gap-3">
@@ -38,7 +38,7 @@ export default function Landing() {
             </Link>
             <Link
               to="/register"
-              className="font-mono bg-accent text-on-accent hover:opacity-85 rounded-full px-4 py-2 text-[0.65rem] font-bold tracking-[0.18em] uppercase transition-opacity"
+              className="font-mono beam-btn rounded-full px-4 py-2 text-[0.65rem] font-bold tracking-[0.18em] uppercase"
             >
               Create account
             </Link>
@@ -48,14 +48,23 @@ export default function Landing() {
 
       <div className="mx-auto max-w-4xl px-6 pb-24">
         {/* Hero */}
-        <header className="pt-16 pb-6">
+        <header className="relative pt-16 pb-6">
+          {/* Beam light: the instrument's own glow */}
+          <div
+            className="pointer-events-none absolute top-4 -left-24 -z-10 hidden h-72 w-72 rounded-full bg-accent/20 blur-[90px] sm:block"
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute top-24 -right-20 -z-10 hidden h-64 w-64 rounded-full bg-good/15 blur-[90px] sm:block"
+            aria-hidden="true"
+          />
           <p className="font-mono text-accent mb-4 text-[0.65rem] tracking-[0.3em] uppercase">
             Research instrument · ML defect scoring
           </p>
           <h1 className="font-display text-5xl leading-[1.02] font-extrabold tracking-tight uppercase sm:text-6xl">
             Is this file
             <br />
-            <span className="text-accent">bug-prone?</span>
+            <span className="beam-text">bug-prone?</span>
           </h1>
           <p className="text-muted mt-5 max-w-xl text-sm leading-relaxed">
             CrossBugSense scores C# and JavaScript source files against twenty-four
@@ -71,7 +80,7 @@ export default function Landing() {
               ['Models', '05'],
               ['Verdict', '0 / 1'],
             ].map(([term, detail]) => (
-              <div key={term} className="bg-panel px-4 py-3">
+              <div key={term} className="bg-panel px-4 py-3 transition-colors hover:bg-card/70">
                 <dt className="font-mono text-muted text-[0.6rem] tracking-[0.18em] uppercase">
                   {term}
                 </dt>
@@ -101,8 +110,11 @@ export default function Landing() {
           </div>
           <ol className="grid gap-4 sm:grid-cols-3">
             {STEPS.map((step) => (
-              <li key={step.index} className="border-line bg-panel rounded-xl border p-5">
-                <span className="font-mono text-accent text-xs font-semibold">
+              <li
+                key={step.index}
+                className="border-line bg-panel rounded-xl border p-5 transition-transform duration-200 hover:-translate-y-0.5"
+              >
+                <span className="font-mono text-accent/25 bg-accent/10 float-right rounded-md px-1.5 text-lg font-bold">
                   {step.index}
                 </span>
                 <h3 className="font-display mt-3 text-sm font-bold text-ink">{step.title}</h3>
@@ -113,7 +125,11 @@ export default function Landing() {
         </section>
 
         {/* CTA */}
-        <section className="border-line bg-panel mt-16 rounded-2xl border p-8 text-center sm:p-10">
+        <section className="border-line bg-panel relative mt-16 overflow-hidden rounded-2xl border p-8 text-center sm:p-10">
+          <div
+            className="pointer-events-none absolute -top-20 left-1/2 h-48 w-[36rem] -translate-x-1/2 rounded-full bg-accent/15 blur-[80px]"
+            aria-hidden="true"
+          />
           <h2 className="font-display text-2xl font-extrabold tracking-tight uppercase sm:text-3xl">
             Start predicting
           </h2>
@@ -123,7 +139,7 @@ export default function Landing() {
           <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
             <Link
               to="/register"
-              className="font-display bg-accent text-on-accent hover:opacity-85 rounded-xl px-8 py-3.5 text-sm font-bold tracking-[0.18em] uppercase transition-opacity"
+              className="font-display beam-btn rounded-xl px-8 py-3.5 text-sm font-bold tracking-[0.18em] uppercase"
             >
               Create account
             </Link>

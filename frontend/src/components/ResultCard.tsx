@@ -35,7 +35,7 @@ function Gauge({ prob, buggy }: { prob: number; buggy: boolean }) {
         <div className="bg-card absolute inset-x-0 top-1/2 h-2 -translate-y-1/2 overflow-hidden rounded-full">
           <div
             className={`h-full rounded-full transition-[width] duration-1000 ease-out ${
-              buggy ? 'bg-accent-2' : 'bg-good'
+              buggy ? 'bg-accent-2 gauge-buggy' : 'bg-good gauge-clean'
             }`}
             style={{ width: `${width}%` }}
           />
@@ -82,7 +82,7 @@ export default function ResultCard({ result }: { result: FilePrediction }) {
         <span
           className={`font-mono rounded-full border px-4 py-1 text-xs font-bold tracking-wider uppercase ${
             buggy
-              ? 'border-accent-2/50 bg-accent-2/10 text-accent-2'
+              ? 'pill-hazard border-accent-2/50 bg-accent-2/10 text-accent-2'
               : 'border-good/50 bg-good/10 text-good'
           }`}
         >

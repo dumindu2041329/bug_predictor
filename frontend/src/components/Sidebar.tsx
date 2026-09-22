@@ -67,7 +67,9 @@ function ChatRow({
         title={`${chat.buggy_files}/${chat.total_files} files flagged buggy`}
         className={({ isActive }) =>
           `block truncate rounded-lg py-2 pr-16 pl-3 text-sm transition-colors ${
-            isActive ? 'bg-accent/10 text-accent' : 'text-muted hover:text-ink hover:bg-card'
+            isActive
+              ? 'bg-accent/10 text-accent shadow-[inset_2px_0_0_var(--accent)]'
+              : 'text-muted hover:text-ink hover:bg-card'
           }`
         }
       >
@@ -124,12 +126,12 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
           type="button"
           aria-label="Close navigation"
           onClick={onClose}
-          className="bg-ink/30 fixed inset-0 z-30 lg:hidden"
+          className="bg-ink/40 fixed inset-0 z-30 backdrop-blur-[2px] lg:hidden"
         />
       )}
 
       <aside
-        className={`border-line bg-panel fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r transition-transform duration-200 lg:translate-x-0 ${
+        className={`border-line bg-panel fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r shadow-[var(--slab-shadow)] transition-transform duration-200 lg:translate-x-0 ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -147,7 +149,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
               className={({ isActive }) =>
                 `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                   isActive
-                    ? 'bg-accent/10 text-accent'
+                    ? 'bg-accent/10 text-accent shadow-[inset_2px_0_0_var(--accent)]'
                     : 'text-muted hover:text-ink hover:bg-card'
                 }`
               }

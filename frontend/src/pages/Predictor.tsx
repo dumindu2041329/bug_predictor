@@ -109,9 +109,7 @@ export default function Predictor() {
           onClick={handleAnalyse}
           disabled={!canAnalyse}
           className={`font-display rounded-xl px-12 py-4 text-sm font-bold tracking-[0.18em] uppercase transition-colors ${
-            canAnalyse
-              ? 'bg-accent text-on-accent hover:opacity-85'
-              : 'bg-card text-muted cursor-not-allowed'
+            canAnalyse ? 'beam-btn' : 'bg-card text-muted cursor-not-allowed'
           }`}
         >
           {loading ? (

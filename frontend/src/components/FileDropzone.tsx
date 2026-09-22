@@ -51,14 +51,14 @@ export default function FileDropzone({ label, file, onFileSelected }: FileDropzo
       }}
       onDragLeave={() => setDragging(false)}
       onDrop={onDrop}
-      className={`flex min-h-[9.5rem] cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-6 py-8 text-center transition-colors ${
+      className={`flex min-h-[9.5rem] cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-6 py-8 text-center transition-all duration-200 ${
         dragging
-          ? 'border-accent bg-card'
+          ? 'dz-hot border-accent bg-accent/5 scale-[1.01]'
           : file
             ? 'border-good/60 bg-panel'
             : rejected
               ? 'border-accent-2/60 bg-panel'
-              : 'border-line bg-panel hover:border-accent/50'
+              : 'border-line bg-panel hover:border-accent/50 hover:bg-accent/[0.03]'
       }`}
     >
       <input

@@ -97,7 +97,7 @@ export default function Register() {
           type="submit"
           disabled={pending}
           className={`font-display w-full rounded-xl py-3 text-sm font-bold tracking-[0.18em] uppercase transition-colors ${
-            pending ? 'bg-card text-muted cursor-not-allowed' : 'bg-accent text-on-accent hover:opacity-85'
+            pending ? 'bg-card text-muted cursor-not-allowed' : 'beam-btn'
           }`}
         >
           {pending ? 'Creating account…' : 'Create account'}

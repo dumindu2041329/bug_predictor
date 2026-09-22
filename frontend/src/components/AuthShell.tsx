@@ -15,7 +15,9 @@ export default function AuthShell({ children }: { children: ReactNode }) {
       </div>
 
       <main className="flex flex-1 items-center justify-center px-6 py-12">
-        <div className="w-full max-w-sm">{children}</div>
+        <div className="border-line bg-panel rise-in w-full max-w-sm rounded-2xl border p-7">
+          {children}
+        </div>
       </main>
     </div>
   )
@@ -23,7 +25,7 @@ export default function AuthShell({ children }: { children: ReactNode }) {
 
 /** Shared field styles for auth inputs. */
 export const inputClass =
-  'border-line bg-panel text-ink placeholder:text-muted focus:border-accent w-full rounded-lg border px-3.5 py-2.5 text-sm outline-none transition-colors'
+  'border-line bg-panel text-ink placeholder:text-muted focus:border-accent w-full rounded-lg border px-3.5 py-2.5 text-sm outline-none transition-all focus:shadow-[0_0_0_3px_var(--glow-accent)]'
 
 export const labelClass =
   'font-mono text-muted mb-1.5 block text-[0.65rem] font-semibold tracking-[0.18em] uppercase'
