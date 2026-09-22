@@ -11,6 +11,7 @@ interface AuthContextValue {
   signIn: (email: string, password: string) => Promise<void>
   signUp: (name: string, email: string, password: string) => Promise<void>
   signOut: () => void
+  updateUser: (user: User) => void
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -66,6 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null)
       setStatus('anon')
     },
+    updateUser: (u) => setUser(u),
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

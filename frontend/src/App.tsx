@@ -6,9 +6,10 @@ import ChatView from './pages/ChatView'
 import Dashboard from './pages/Dashboard'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
-import Placeholder from './pages/Placeholder'
 import Predictor from './pages/Predictor'
+import Profile from './pages/Profile'
 import Register from './pages/Register'
+import Settings from './pages/Settings'
 
 export default function App() {
   return (
@@ -43,24 +44,8 @@ export default function App() {
           >
             <Route index element={<Predictor />} />
             <Route path="chat/:chatId" element={<ChatView />} />
-            <Route
-              path="profile"
-              element={
-                <Placeholder
-                  title="Profile"
-                  note="Your account details and preferences will live here once the research tooling is wired up."
-                />
-              }
-            />
-            <Route
-              path="settings"
-              element={
-                <Placeholder
-                  title="Settings"
-                  note="Model thresholds, dataset sources and workspace settings are on the roadmap."
-                />
-              }
-            />
+            <Route path="profile" element={<Profile />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

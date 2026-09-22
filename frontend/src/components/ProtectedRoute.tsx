@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Navigate, useLocation } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 
 function SessionLoader() {
@@ -15,14 +15,14 @@ function SessionLoader() {
   )
 }
 
-/** Block unauthenticated visitors; remembers where they were headed. */
+/** Block unauthenticated visitors; send them to the landing page. */
 export function RequireAuth({ children }: { children: ReactNode }) {
   const { status } = useAuth()
-  const location = useLocation()
 
   if (status === 'loading') return <SessionLoader />
+  // Signed out — explicit logout or an expired session — returns to the landing page
   if (status !== 'authed') {
-    return <Navigate to="/login" state={{ from: location.pathname }} replace />
+    return <Navigate to="/" replace />
   }
   return <>{children}</>
 }

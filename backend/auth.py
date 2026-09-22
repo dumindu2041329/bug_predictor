@@ -1,6 +1,7 @@
 """
 CrossBugSense — authentication (SQLite users + JWT sessions).
-Endpoints: POST /api/auth/register, POST /api/auth/login, GET /api/auth/me
+Endpoints: POST /api/auth/register, POST /api/auth/login, GET /api/auth/me,
+           PATCH /api/auth/profile, POST /api/auth/password, DELETE /api/auth/account
 """
 import os
 import re
@@ -55,7 +56,12 @@ def configure_jwt(app):
 
 
 def _user_row(row):
-    return {'id': row['id'], 'name': row['name'], 'email': row['email']}
+    return {
+        'id': row['id'],
+        'name': row['name'],
+        'email': row['email'],
+        'created_at': row['created_at'],
+    }
 
 
 def _issue_token(user):
@@ -87,8 +93,8 @@ def register():
     except sqlite3.IntegrityError:
         return jsonify({'error': 'An account with this email already exists.'}), 409
 
-    user = {'id': cur.lastrowid, 'name': name, 'email': email}
-    return _issue_token(user)
+    row = db.execute('SELECT * FROM users WHERE id = ?', (cur.lastrowid,)).fetchone()
+    return _issue_token(_user_row(row))
 
 
 @auth_bp.route('/login', methods=['POST'])
@@ -112,3 +118,79 @@ def me():
     if row is None:
         return jsonify({'error': 'Account no longer exists.'}), 401
     return jsonify({'user': _user_row(row)})
+
+
+@auth_bp.route('/profile', methods=['PATCH'])
+@jwt_required()
+def update_profile():
+    data = request.get_json(silent=True) or {}
+    user_id = get_jwt_identity()
+    db = get_db()
+    row = db.execute('SELECT * FROM users WHERE id = ?', (user_id,)).fetchone()
+    if row is None:
+        return jsonify({'error': 'Account no longer exists.'}), 401
+
+    name = row['name']
+    email = row['email']
+    if 'name' in data:
+        name = (data.get('name') or '').strip()
+        if not name:
+            return jsonify({'error': 'Please enter your name.'}), 400
+    if 'email' in data:
+        email = (data.get('email') or '').strip().lower()
+        if not EMAIL_RE.match(email):
+            return jsonify({'error': 'Please enter a valid email address.'}), 400
+
+    try:
+        db.execute('UPDATE users SET name = ?, email = ? WHERE id = ?', (name, email, user_id))
+        db.commit()
+    except sqlite3.IntegrityError:
+        return jsonify({'error': 'An account with this email already exists.'}), 409
+
+    updated = db.execute('SELECT * FROM users WHERE id = ?', (user_id,)).fetchone()
+    return jsonify({'user': _user_row(updated)})
+
+
+@auth_bp.route('/password', methods=['POST'])
+@jwt_required()
+def change_password():
+    data = request.get_json(silent=True) or {}
+    current = data.get('current_password') or ''
+    new = data.get('new_password') or ''
+    user_id = get_jwt_identity()
+    db = get_db()
+    row = db.execute('SELECT * FROM users WHERE id = ?', (user_id,)).fetchone()
+    if row is None:
+        return jsonify({'error': 'Account no longer exists.'}), 401
+    if not check_password_hash(row['password_hash'], current):
+        return jsonify({'error': 'Your current password is incorrect.'}), 403
+    if len(new) < 8:
+        return jsonify({'error': 'New password must be at least 8 characters.'}), 400
+
+    db.execute(
+        'UPDATE users SET password_hash = ? WHERE id = ?',
+        (generate_password_hash(new), user_id),
+    )
+    db.commit()
+    return jsonify({'ok': True})
+
+
+@auth_bp.route('/account', methods=['DELETE'])
+@jwt_required()
+def delete_account():
+    data = request.get_json(silent=True) or {}
+    password = data.get('password') or ''
+    user_id = get_jwt_identity()
+    db = get_db()
+    row = db.execute('SELECT * FROM users WHERE id = ?', (user_id,)).fetchone()
+    if row is None:
+        return jsonify({'error': 'Account no longer exists.'}), 401
+    if not check_password_hash(row['password_hash'], password):
+        return jsonify({'error': 'Password is incorrect.'}), 403
+
+    # Remove the user's saved analyses first, then the account itself.
+    db.execute('DELETE FROM chats WHERE user_id = ?', (user_id,))
+    db.execute('DELETE FROM users WHERE id = ?', (user_id,))
+    db.commit()
+    return jsonify({'ok': True})
+

@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import AuthShell, { inputClass, labelClass } from '../components/AuthShell'
+import PasswordInput from '../components/PasswordInput'
 
 export default function Login() {
   const { signIn } = useAuth()
@@ -51,21 +52,15 @@ export default function Login() {
             placeholder="you@studio.dev"
           />
         </div>
-        <div>
-          <label htmlFor="password" className={labelClass}>
-            Password
-          </label>
-          <input
-            id="password"
-            type="password"
-            autoComplete="current-password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className={inputClass}
-            placeholder="••••••••"
-          />
-        </div>
+        <PasswordInput
+          id="password"
+          label="Password"
+          autoComplete="current-password"
+          required
+          value={password}
+          onChange={setPassword}
+          placeholder="••••••••"
+        />
 
         {error && (
           <p

@@ -7,6 +7,7 @@ import FileDropzone from '../components/FileDropzone'
 import ModelSelector from '../components/ModelSelector'
 import ResultCard from '../components/ResultCard'
 import SectionHeading from '../components/SectionHeading'
+import { getDefaultModel } from '../settings'
 import type { FilePrediction, ModelInfo, PredictResponse } from '../types'
 
 export default function Predictor() {
@@ -14,7 +15,7 @@ export default function Predictor() {
   const { saveChat } = useChats()
   const navigate = useNavigate()
   const [models, setModels] = useState<ModelInfo[]>([])
-  const [selectedModel, setSelectedModel] = useState('random_forest')
+  const [selectedModel, setSelectedModel] = useState(() => getDefaultModel() || 'random_forest')
   const [file1, setFile1] = useState<File | null>(null)
   const [file2, setFile2] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)

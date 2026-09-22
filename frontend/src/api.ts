@@ -81,6 +81,40 @@ export async function fetchMe(): Promise<User> {
   return data.user
 }
 
+/** Update the signed-in user's name and/or email. Returns the refreshed user. */
+export async function updateProfile(
+  patch: { name?: string; email?: string },
+): Promise<User> {
+  const res = await fetch(`${API_BASE}/api/auth/profile`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify(patch),
+  })
+  if (!res.ok) throw await errorFrom(res, 'Failed to save profile')
+  const data = await res.json()
+  return data.user
+}
+
+/** Change the password for the signed-in user. */
+export async function changePassword(current: string, next: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/api/auth/password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ current_password: current, new_password: next }),
+  })
+  if (!res.ok) throw await errorFrom(res, 'Failed to update password')
+}
+
+/** Permanently delete the signed-in user's account and all saved analyses. */
+export async function deleteAccount(password: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/api/auth/account`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ password }),
+  })
+  if (!res.ok) throw await errorFrom(res, 'Failed to delete account')
+}
+
 /** Fetch the list of available ML models from the backend. */
 export async function fetchModels(): Promise<ModelsResponse> {
   const res = await fetch(`${API_BASE}/api/models`, { headers: authHeaders() })

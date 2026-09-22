@@ -330,6 +330,18 @@ h3 {
   animation: rise-in 0.5s ease both;
 }
 
+/* Sample-reading bars on the landing page grow to their value once */
+.bar-grow {
+  transform-origin: left;
+  animation: bar-grow 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes bar-grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

@@ -1,23 +1,13 @@
 import { useState } from 'react'
-
-type Theme = 'dark' | 'light'
-
-function currentTheme(): Theme {
-  return document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'
-}
+import { getTheme, setTheme, type Theme } from '../settings'
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>(currentTheme)
+  const [theme, setThemeState] = useState<Theme>(getTheme)
 
   const toggle = () => {
     const next: Theme = theme === 'dark' ? 'light' : 'dark'
+    setThemeState(next)
     setTheme(next)
-    document.documentElement.dataset.theme = next
-    try {
-      localStorage.setItem('cbs-theme', next)
-    } catch {
-      // storage unavailable — theme still applies for this session
-    }
   }
 
   const seg = (active: boolean) =>
