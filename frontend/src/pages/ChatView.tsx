@@ -6,9 +6,9 @@ import ConfirmDialog from '../components/ConfirmDialog'
 import ResultCard from '../components/ResultCard'
 import type { Chat } from '../types'
 
-/** SQLite stores UTC "YYYY-MM-DD HH:MM:SS" — render it in the viewer's locale. */
+/** Postgres timestamptz arrives as ISO — render it in the viewer's locale. */
 function formatDate(stamp: string): string {
-  const d = new Date(stamp.includes('T') ? stamp : `${stamp.replace(' ', 'T')}Z`)
+  const d = new Date(stamp)
   return Number.isNaN(d.getTime()) ? stamp : d.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
 }
 
@@ -20,10 +20,10 @@ export default function ChatView() {
   const [error, setError] = useState<string | null>(null)
   const [deleteOpen, setDeleteOpen] = useState(false)
 
-  const id = Number(chatId)
+  const id = chatId ?? ''
 
   useEffect(() => {
-    if (!Number.isInteger(id) || id <= 0) {
+    if (!id) {
       setError('This chat link is invalid.')
       return
     }

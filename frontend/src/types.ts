@@ -1,15 +1,11 @@
 /** Shared API types for the CrossBugSense frontend. */
 
 export interface User {
-  id: number
+  /** Supabase auth.users uid (UUID string). */
+  id: string
   name: string
   email: string
   created_at?: string
-}
-
-export interface AuthResponse {
-  token: string
-  user: User
 }
 
 export interface ModelInfo {
@@ -41,7 +37,7 @@ export interface PredictResponse {
 
 /** A saved analysis session ("chat") shown in the sidebar. */
 export interface ChatSummary {
-  id: number
+  id: string
   title: string
   model: string
   pinned: boolean

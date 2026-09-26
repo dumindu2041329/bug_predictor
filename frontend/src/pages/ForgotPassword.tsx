@@ -1,50 +1,51 @@
 import { useState, type FormEvent } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../auth/AuthContext'
+import { Link } from 'react-router-dom'
+import { forgotPassword } from '../api'
 import AuthShell, { inputClass, labelClass } from '../components/AuthShell'
-import PasswordInput from '../components/PasswordInput'
 
-export default function Register() {
-  const { signUp } = useAuth()
-  const navigate = useNavigate()
-
-  const [name, setName] = useState('')
+export default function ForgotPassword() {
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
-  const [confirmSent, setConfirmSent] = useState(false)
+  const [sent, setSent] = useState<{ message: string; demoResetUrl: string | null } | null>(null)
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setPending(true)
     setError(null)
     try {
-      const signedIn = await signUp(name, email, password)
-      if (signedIn) {
-        navigate('/dashboard', { replace: true })
-      } else {
-        setConfirmSent(true)
-      }
+      setSent(await forgotPassword(email))
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Registration failed.')
+      setError(err instanceof Error ? err.message : 'Failed to start password reset.')
     } finally {
       setPending(false)
     }
   }
 
-  if (confirmSent) {
+  if (sent) {
     return (
       <AuthShell>
         <h1 className="font-display text-2xl font-extrabold tracking-tight uppercase">
           Check your email
         </h1>
-        <p className="text-muted mt-2 text-sm">
-          We sent a confirmation link to{' '}
-          <span className="text-ink font-semibold">{email}</span>. Click it to activate your
-          account, then sign in.
-        </p>
+        <p className="text-muted mt-2 text-sm">{sent.message}</p>
+
+        {sent.demoResetUrl && (
+          <div className="border-line bg-card mt-6 rounded-lg border p-4">
+            <p className="font-mono text-muted text-[0.65rem] font-semibold tracking-[0.18em] uppercase">
+              Demo link (no email service configured)
+            </p>
+            <Link
+              to={sent.demoResetUrl}
+              className="text-accent mt-2 inline-block text-sm font-semibold underline-offset-4 hover:underline"
+            >
+              Reset your password →
+            </Link>
+          </div>
+        )}
+
         <p className="text-muted mt-6 text-center text-sm">
+          Remembered it?{' '}
           <Link to="/login" className="text-accent font-semibold underline-offset-4 hover:underline">
             Back to sign in
           </Link>
@@ -56,28 +57,13 @@ export default function Register() {
   return (
     <AuthShell>
       <h1 className="font-display text-2xl font-extrabold tracking-tight uppercase">
-        Create account
+        Forgot password
       </h1>
       <p className="text-muted mt-2 text-sm">
-        One account, unlimited file scorings.
+        Enter your account email and we&apos;ll generate a reset link.
       </p>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-5" noValidate>
-        <div>
-          <label htmlFor="name" className={labelClass}>
-            Name
-          </label>
-          <input
-            id="name"
-            type="text"
-            autoComplete="name"
-            required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className={inputClass}
-            placeholder="Your name"
-          />
-        </div>
         <div>
           <label htmlFor="email" className={labelClass}>
             Email
@@ -93,16 +79,6 @@ export default function Register() {
             placeholder="you@studio.dev"
           />
         </div>
-        <PasswordInput
-          id="password"
-          label="Password"
-          autoComplete="new-password"
-          required
-          minLength={8}
-          value={password}
-          onChange={setPassword}
-          placeholder="At least 8 characters"
-        />
 
         {error && (
           <p
@@ -120,14 +96,14 @@ export default function Register() {
             pending ? 'bg-card text-muted cursor-not-allowed' : 'beam-btn'
           }`}
         >
-          {pending ? 'Creating account…' : 'Create account'}
+          {pending ? 'Sending…' : 'Send reset link'}
         </button>
       </form>
 
       <p className="text-muted mt-6 text-center text-sm">
-        Already registered?{' '}
+        Remembered it?{' '}
         <Link to="/login" className="text-accent font-semibold underline-offset-4 hover:underline">
-          Sign in
+          Back to sign in
         </Link>
       </p>
     </AuthShell>

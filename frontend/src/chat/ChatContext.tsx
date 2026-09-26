@@ -8,7 +8,7 @@ function sortChats(chats: ChatSummary[]): ChatSummary[] {
   return [...chats].sort((a, b) => {
     if (a.pinned !== b.pinned) return a.pinned ? -1 : 1
     if (a.created_at !== b.created_at) return a.created_at < b.created_at ? 1 : -1
-    return b.id - a.id
+    return 0
   })
 }
 

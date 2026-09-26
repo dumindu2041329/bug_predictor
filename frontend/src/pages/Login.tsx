@@ -62,6 +62,15 @@ export default function Login() {
           placeholder="••••••••"
         />
 
+        <div className="flex justify-end">
+          <Link
+            to="/forgot-password"
+            className="text-muted hover:text-ink text-sm underline-offset-4 transition-colors hover:underline"
+          >
+            Forgot password?
+          </Link>
+        </div>
+
         {error && (
           <p
             role="alert"

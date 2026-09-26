@@ -203,7 +203,6 @@ function PasswordCard() {
 
 /* ── Danger zone ────────────────────────────────────────────── */
 function DangerCard({ onDeleted }: { onDeleted: () => void }) {
-  const [password, setPassword] = useState('')
   const [confirming, setConfirming] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -213,12 +212,11 @@ function DangerCard({ onDeleted }: { onDeleted: () => void }) {
     setBusy(true)
     setError(null)
     try {
-      await api.deleteAccount(password)
+      await api.deleteAccount()
       onDeleted()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete account.')
       setBusy(false)
-      setPassword('')
     }
   }
 
@@ -232,17 +230,6 @@ function DangerCard({ onDeleted }: { onDeleted: () => void }) {
         Permanently removes your account and every saved analysis. This can&apos;t be undone.
       </p>
 
-      <div className="mt-4 max-w-sm">
-        <PasswordInput
-          id="delete-pw"
-          label="Confirm with your password"
-          autoComplete="current-password"
-          value={password}
-          onChange={setPassword}
-          placeholder="••••••••"
-        />
-      </div>
-
       {error && (
         <p role="alert" className="text-accent-2 mt-3 text-sm">
           {error}
@@ -251,7 +238,7 @@ function DangerCard({ onDeleted }: { onDeleted: () => void }) {
 
       <button
         type="button"
-        disabled={password.length === 0 || busy}
+        disabled={busy}
         onClick={() => setConfirming(true)}
         className="font-mono mt-4 rounded-lg bg-accent-2 px-5 py-2.5 text-[0.65rem] font-semibold tracking-[0.15em] text-white uppercase transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
       >

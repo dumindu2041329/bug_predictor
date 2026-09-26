@@ -12,11 +12,12 @@ are bug-prone, using models trained on source code metrics and code smell metric
 ![Flask](https://img.shields.io/badge/Flask-REST%20API-000000?style=flat-square&logo=flask&logoColor=white)
 ![scikit--learn](https://img.shields.io/badge/scikit--learn-1.3-F7931E?style=flat-square&logo=scikitlearn&logoColor=white)
 ![XGBoost](https://img.shields.io/badge/XGBoost-2.0-FF7F00?style=flat-square)
-![JWT](https://img.shields.io/badge/Auth-JWT-000000?style=flat-square&logo=jsonwebtokens&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-Auth+%2B+Postgres-3ECF8E?style=flat-square&logo=supabase&logoColor=white)
 ![Status](https://img.shields.io/badge/status-research-brightgreen?style=flat-square)
 
 - **Frontend:** React + Vite + TypeScript + Tailwind CSS
 - **Backend:** Python (Flask REST API)
+- **Auth & data:** Supabase (Auth, Postgres with RLS for profiles and saved chats)
 
 ---
 
@@ -26,9 +27,11 @@ are bug-prone, using models trained on source code metrics and code smell metric
 bug_predictor/
 ├── backend/                  # Python Flask API
 │   ├── app.py                # API server (CORS enabled for the dev frontend)
+│   ├── auth.py               # Supabase access-token verification (JWKS / HS256)
 │   ├── train_models.py       # Script to (re)train models from dataset
 │   ├── requirements.txt      # Python dependencies
 │   ├── dataset.csv           # Training dataset
+│   ├── supabase/migrations/  # Reference copy of the Supabase schema (profiles, chats, RLS)
 │   └── models/               # Pre-trained ML models (.pkl)
 │       ├── random_forest.pkl
 │       ├── knn.pkl
@@ -36,11 +39,15 @@ bug_predictor/
 │       ├── naive_bayes.pkl
 │       └── xgboost.pkl
 └── frontend/                 # React + Vite + Tailwind SPA
+    ├── .env                  # Supabase project URL + publishable (anon) key
     ├── vite.config.ts        # Dev proxy: /api → http://localhost:5000
     └── src/
-        ├── App.tsx           # Main page
-        ├── api.ts            # API client
+        ├── App.tsx           # Routes + providers
+        ├── api.ts            # Flask client + Supabase auth/chat calls
+        ├── supabase.ts       # Single Supabase client (Auth + PostgREST)
         ├── types.ts          # Shared types (24 metric names, responses)
+        ├── auth/AuthContext.tsx  # Session state (Supabase onAuthStateChange)
+        ├── chat/ChatContext.tsx  # Saved analyses (Supabase-backed, RLS-scoped)
         └── components/
             ├── FileDropzone.tsx   # Drag & drop source file upload
             ├── ModelSelector.tsx  # ML model picker
@@ -70,26 +77,29 @@ npm install
 npm run dev                   # UI on http://localhost:5173
 ```
 
+Supabase credentials live in `frontend/.env` (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`)
+— both are public values; row level security protects the data. The schema migration is
+applied to the Supabase project (see `backend/supabase/migrations/`).
+
 The Vite dev server proxies `/api/*` requests to Flask, so no extra
 configuration is needed. For production builds, run `npm run build`
 (output in `frontend/dist/`), or set `VITE_API_URL` to the backend URL.
+Optionally set `SUPABASE_JWT_SECRET` (Dashboard → Settings → API) to verify tokens
+with HS256 instead of fetching the project JWKS.
 
 ---
 
 ## API Endpoints
 
+Authentication (register / login / password reset / profile / account deletion) and saved
+chats are handled **directly by Supabase** from the frontend (`@supabase/supabase-js` +
+PostgREST with RLS). The Flask API only serves the ML endpoints, both requiring an
+`Authorization: Bearer <supabase access token>` header:
+
 | Method | Endpoint           | Description                                        |
 |--------|--------------------|----------------------------------------------------|
-| POST   | `/api/auth/register`| Name + email + password → JWT + user (auto sign-in) |
-| POST   | `/api/auth/login`  | Email + password → JWT + user                      |
-| GET    | `/api/auth/me`     | Current user for the stored JWT (session restore)  |
-| GET    | `/api/chats`       | List saved analysis chats, pinned first (auth required) |
-| POST   | `/api/chats`       | Save an analysis run as a chat `{title, model, payload}` |
-| GET    | `/api/chats/<id>`  | One chat with its full prediction payload          |
-| PATCH  | `/api/chats/<id>`  | Pin/unpin a chat `{pinned: boolean}`               |
-| DELETE | `/api/chats/<id>`  | Delete a chat                                      |
-| GET    | `/api/models`      | List available models with test accuracy (auth required) |
-| POST   | `/api/predict`     | Multipart form: `file1`, `file2`, `model` → JSON predictions (auth required) |
+| GET    | `/api/models`      | List available models with test accuracy           |
+| POST   | `/api/predict`     | Multipart form: `file1`, `file2`, `model` → JSON predictions |
 
 ---
 
